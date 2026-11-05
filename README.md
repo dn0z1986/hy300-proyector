@@ -1,5 +1,7 @@
 # Inicio — pantalla de inicio bonita para el proyector Magcubic HY300
 
+🇬🇧 [Read in English](README.en.md)
+
 Una pantalla de inicio "tipo Apple" para el proyector **Magcubic HY300** (Android 11), que también sirve en otras teles y cajas Android TV.
 
 ![Pantalla de inicio](docs/inicio.png)
