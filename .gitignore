@@ -1,6 +1,9 @@
 # Capturas de las pruebas (tienen datos personales: perfiles, cuentas, móvil)
 captura-*.png
 
+# Archivos personales
+foto-perfil-github.jpg
+
 # Clave de firma: cada uno genera la suya
 *.keystore
 

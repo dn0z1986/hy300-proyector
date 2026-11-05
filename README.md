@@ -7,8 +7,8 @@ Una pantalla de inicio "tipo Apple" para el proyector **Magcubic HY300** (Androi
 - Fondo de un lago con montañas, y **la hora escondida detrás de las montañas** (efecto profundidad).
 - Hora y fecha en **azul oscuro y gruesas**, para que se lean bien proyectadas sobre una pared blanca.
 - Botones grandes para **Jellyfin, Netflix, IPTV y YouTube**, más "Todas las apps" y Ajustes.
-- Fila de accesos rápidos del proyector: **Wi‑Fi, Bluetooth, HDMI, Imagen** (enfoque/trapecio), **Reposo** y **Ajustes**.
-- Indicador de **Wi‑Fi** arriba a la derecha.
+- Arriba a la derecha, botones de **Wi‑Fi** (con el nombre de tu red) y **Bluetooth** (con el aparato conectado, por ejemplo unos auriculares). Se eligen con el mando y abren sus ajustes.
+- Fila de accesos rápidos del proyector: **HDMI**, **Imagen** (enfoque/trapecio), **Reposo** y **Ajustes**.
 - Todo se maneja con las flechas y el OK del mando.
 
 ![Todas las apps](docs/todas-las-apps.png)
