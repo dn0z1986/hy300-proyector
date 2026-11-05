@@ -1,0 +1,19 @@
+cm.aptoidetv.pt
+com.hbo.hbonow
+com.mobisystems.office
+org.courville.nova
+org.xbmc.kodi
+com.android.calculator2
+com.android.music
+com.android.egg
+com.htc.eventuploadservice
+com.htc.hyk_test
+com.softwinner.agingdragonbox
+com.softwinner.dragonbox
+com.softwinner.dragonatt
+com.android.printspooler
+com.android.bips
+com.android.printservice.recommendation
+com.android.cellbroadcastreceiver
+com.softwinner.awlivetv
+# Tienda del fabricante (com.htc.storeos): no se puede quitar (el sistema la reinstala al arrancar). Se ha desactivado su opcion 'Recordatorio de actualizacion de la aplicacion' dentro de sus ajustes.

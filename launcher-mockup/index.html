@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Inicio HY300</title>
+<style>
+  :root {
+    --glass: rgba(255,255,255,.14);
+    --glass-border: rgba(255,255,255,.38);
+    --text: rgba(255,255,255,.95);
+    --text-soft: rgba(255,255,255,.75);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; background: #0d1a20; overflow: hidden; }
+  body {
+    font-family: "Segoe UI Variable Display", "Segoe UI", -apple-system, "SF Pro Display", Roboto, sans-serif;
+    color: var(--text);
+  }
+
+  /* Lienzo fijo 1920x1080, escalado a la ventana (como la salida del proyector) */
+  #stage {
+    position: absolute; left: 50%; top: 50%;
+    width: 1920px; height: 1080px;
+    transform-origin: center center;
+    overflow: hidden;
+  }
+  #wallpaper { position: absolute; inset: 0; width: 100%; height: 100%; }
+  #shade {
+    position: absolute; inset: 0;
+    background: linear-gradient(to bottom, rgba(0,0,0,.18) 0%, rgba(0,0,0,0) 30%, rgba(0,0,0,0) 50%, rgba(0,0,0,.35) 100%);
+  }
+
+  .glass {
+    background: var(--glass);
+    border: 1.5px solid var(--glass-border);
+    backdrop-filter: blur(18px) saturate(140%);
+    -webkit-backdrop-filter: blur(18px) saturate(140%);
+    box-shadow: 0 10px 30px rgba(0,0,0,.18), inset 0 1px 0 rgba(255,255,255,.35);
+  }
+
+  /* Barra de estado */
+  #status { position: absolute; top: 48px; right: 56px; display: flex; gap: 16px; }
+  .pill {
+    height: 60px; padding: 0 24px; border-radius: 30px;
+    display: flex; align-items: center; gap: 14px;
+    font-size: 24px; font-weight: 500;
+  }
+  .pill svg { width: 26px; height: 26px; }
+  .pill.round { width: 60px; padding: 0; justify-content: center; }
+
+  /* Fecha y hora */
+  #date {
+    position: absolute; top: 190px; width: 100%; text-align: center;
+    font-size: 36px; font-weight: 500; letter-spacing: .5px;
+    text-shadow: 0 2px 12px rgba(0,0,0,.25);
+  }
+  #clock {
+    position: absolute; top: 230px; width: 100%; text-align: center;
+    font-size: 240px; font-weight: 200; letter-spacing: -6px; line-height: 1;
+    color: rgba(255,255,255,.88);
+    text-shadow: 0 4px 40px rgba(0,0,0,.18);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Filas */
+  .row { position: absolute; left: 0; width: 100%; display: flex; justify-content: center; }
+  #apps { top: 610px; gap: 30px; align-items: center; }
+  #quick { top: 830px; gap: 26px; }
+
+  .tile {
+    position: relative; cursor: pointer; outline: none;
+    transition: transform .18s cubic-bezier(.2,.8,.2,1), box-shadow .18s, border-color .18s;
+  }
+  .tile.focus {
+    transform: scale(1.1);
+    box-shadow: 0 0 0 4px rgba(255,255,255,.95), 0 22px 50px rgba(0,0,0,.4);
+    z-index: 2;
+  }
+
+  .app {
+    width: 260px; height: 146px; border-radius: 28px;
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+    box-shadow: 0 12px 30px rgba(0,0,0,.28);
+  }
+  .app::after { /* brillo de cristal */
+    content: ""; position: absolute; inset: 0; border-radius: inherit;
+    background: linear-gradient(160deg, rgba(255,255,255,.28) 0%, rgba(255,255,255,0) 42%);
+    pointer-events: none;
+  }
+  .app.square {
+    width: 146px; color: var(--text);
+  }
+  .app.square svg { width: 52px; height: 52px; }
+
+  .yt { background: #fff; color: #0f0f0f; gap: 12px; font-size: 40px; font-weight: 700; letter-spacing: -1.5px; }
+  .yt .logo { width: 62px; height: 44px; background: #ff0033; border-radius: 12px; display: grid; place-items: center; }
+  .nf { background: #000; color: #e50914; font-family: "Arial Black", Impact, sans-serif; font-size: 46px; letter-spacing: 1px; }
+  .jf { background: linear-gradient(135deg, #aa5cc3, #00a4dc); color: #fff; gap: 12px; font-size: 42px; font-weight: 600; letter-spacing: -1px; }
+  .max { background: linear-gradient(135deg, #0b0d3a, #2b2fd6); color: #fff; font-size: 52px; font-weight: 800; letter-spacing: -2px; }
+  .dp { background: linear-gradient(135deg, #0a1a5c, #1a73c8 70%, #3fd0e0); color: #fff; font-family: Georgia, serif; font-style: italic; font-size: 44px; }
+
+  .qs {
+    width: 200px; height: 104px; border-radius: 24px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+    font-size: 21px; color: var(--text-soft); font-weight: 500;
+  }
+  .qs svg { width: 34px; height: 34px; color: var(--text); }
+  .qs.on { background: rgba(255,255,255,.32); }
+
+  #toast {
+    position: absolute; left: 50%; bottom: 60px; transform: translateX(-50%) translateY(20px);
+    padding: 18px 34px; border-radius: 40px; font-size: 26px; font-weight: 500;
+    opacity: 0; transition: opacity .2s, transform .2s; pointer-events: none;
+  }
+  #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  #hint {
+    position: fixed; left: 16px; bottom: 12px; font: 13px system-ui, sans-serif;
+    color: rgba(255,255,255,.55);
+  }
+</style>
+</head>
+<body>
+<div id="stage">
+  <!-- Paisaje: montañas y lago con reflejo -->
+  <svg id="wallpaper" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <defs>
+      <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#5fa3b8"/>
+        <stop offset=".55" stop-color="#a9d3d8"/>
+        <stop offset="1" stop-color="#e3efe9"/>
+      </linearGradient>
+      <radialGradient id="sun" cx="960" cy="470" r="520" gradientUnits="userSpaceOnUse">
+        <stop offset="0" stop-color="#fff6df" stop-opacity=".9"/>
+        <stop offset="1" stop-color="#fff6df" stop-opacity="0"/>
+      </radialGradient>
+      <linearGradient id="far" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#8fbccb"/><stop offset="1" stop-color="#b6d6dc"/>
+      </linearGradient>
+      <linearGradient id="mid" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#3f7690"/><stop offset="1" stop-color="#6c9cab"/>
+      </linearGradient>
+      <linearGradient id="near" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#9a6a45"/><stop offset="1" stop-color="#5c4030"/>
+      </linearGradient>
+      <linearGradient id="lake" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#8cc3cc" stop-opacity=".55"/>
+        <stop offset="1" stop-color="#1f4b5a" stop-opacity=".9"/>
+      </linearGradient>
+      <linearGradient id="shore" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#7a5236"/><stop offset="1" stop-color="#2e2018"/>
+      </linearGradient>
+      <filter id="soft"><feGaussianBlur stdDeviation="4"/></filter>
+      <clipPath id="below"><rect x="0" y="640" width="1920" height="440"/></clipPath>
+      <g id="range">
+        <path fill="url(#far)" d="M0 600 L180 470 L300 520 L460 400 L620 540 L760 470 L900 560 L1040 450 L1200 520 L1380 420 L1540 530 L1700 460 L1920 540 L1920 640 L0 640 Z"/>
+        <path fill="url(#mid)" d="M0 640 L150 540 L300 400 L380 440 L470 300 L600 470 L720 560 L860 600 L1000 580 L1150 520 L1300 430 L1420 360 L1500 320 L1600 400 L1720 460 L1820 520 L1920 500 L1920 640 Z"/>
+        <path fill="#f4f8f8" opacity=".92" d="M470 300 L428 350 L452 344 L470 366 L492 340 L516 354 Z"/>
+        <path fill="#f4f8f8" opacity=".92" d="M1500 320 L1458 364 L1480 358 L1500 376 L1522 356 L1548 368 Z"/>
+        <path fill="url(#near)" d="M0 640 L0 575 L110 595 L230 615 L330 640 Z"/>
+        <path fill="url(#near)" d="M1920 640 L1920 570 L1790 590 L1650 615 L1560 640 Z"/>
+      </g>
+    </defs>
+
+    <rect width="1920" height="1080" fill="url(#sky)"/>
+    <rect width="1920" height="1080" fill="url(#sun)"/>
+    <use href="#range"/>
+    <!-- Reflejo en el lago -->
+    <g clip-path="url(#below)">
+      <use href="#range" transform="translate(0 1280) scale(1 -1)" opacity=".5" filter="url(#soft)"/>
+      <rect x="0" y="640" width="1920" height="440" fill="url(#lake)"/>
+      <g fill="#ffffff" opacity=".18">
+        <rect x="520" y="690" width="260" height="2" rx="1"/>
+        <rect x="1080" y="712" width="340" height="2" rx="1"/>
+        <rect x="300" y="760" width="200" height="2" rx="1"/>
+        <rect x="1300" y="790" width="180" height="2" rx="1"/>
+      </g>
+    </g>
+    <path fill="url(#shore)" d="M0 1080 L0 930 Q 420 880 900 940 T 1920 900 L1920 1080 Z"/>
+  </svg>
+  <div id="shade"></div>
+
+  <div id="status">
+    <div class="pill glass">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 15.3A8.5 8.5 0 0 1 8.7 4a8.5 8.5 0 1 0 11.3 11.3z"/></svg>
+      <span id="temp">14°</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M2 8.8a15 15 0 0 1 20 0M5 12.5a10 10 0 0 1 14 0M8.5 16.2a5 5 0 0 1 7 0"/><circle cx="12" cy="19.5" r="1.2" fill="currentColor"/></svg>
+    </div>
+    <div class="pill round glass">
+      <svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="8" r="4.2"/><path d="M3.5 21a8.5 8.5 0 0 1 17 0z"/></svg>
+    </div>
+  </div>
+
+  <div id="date"></div>
+  <div id="clock">00:00</div>
+
+  <div class="row" id="apps">
+    <div class="tile app yt" data-name="YouTube"><span class="logo"><svg width="22" height="22" viewBox="0 0 24 24" fill="#fff"><path d="M7 4l14 8-14 8z"/></svg></span>YouTube</div>
+    <div class="tile app nf" data-name="Netflix">NETFLIX</div>
+    <div class="tile app jf" data-name="Jellyfin"><svg width="40" height="40" viewBox="0 0 24 24" fill="#fff"><path d="M12 2.5c-1.6 0-7 9.8-6.2 11.4.8 1.6 11.6 1.6 12.4 0C19 12.3 13.6 2.5 12 2.5zm0 4.2c1 0 4 5.6 3.6 6.5-.5.9-6.7.9-7.2 0C8 12.3 11 6.7 12 6.7z"/></svg>jellyfin</div>
+    <div class="tile app max" data-name="HBO Max">max</div>
+    <div class="tile app dp" data-name="Disney+">Disney+</div>
+    <div class="tile app square glass" data-name="Todas las apps">
+      <svg viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="4" width="6.5" height="6.5" rx="2"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="2"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="2"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="2"/></svg>
+    </div>
+    <div class="tile app square glass" data-name="Ajustes">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
+    </div>
+  </div>
+
+  <div class="row" id="quick">
+    <div class="tile qs glass on" data-name="Wi‑Fi">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M2 8.8a15 15 0 0 1 20 0M5 12.5a10 10 0 0 1 14 0M8.5 16.2a5 5 0 0 1 7 0"/><circle cx="12" cy="19.5" r="1.2" fill="currentColor"/></svg>Wi‑Fi
+    </div>
+    <div class="tile qs glass" data-name="Bluetooth">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7l10 10-5 5V2l5 5L7 17"/></svg>Bluetooth
+    </div>
+    <div class="tile qs glass" data-name="HDMI">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h5a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-5M4 12h11M11 8l4 4-4 4"/></svg>HDMI
+    </div>
+    <div class="tile qs glass" data-name="Imagen">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"><path d="M5 5h14l-2 14H7z"/></svg>Imagen
+    </div>
+    <div class="tile qs glass" data-name="Salvapantallas">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 15.3A8.5 8.5 0 0 1 8.7 4a8.5 8.5 0 1 0 11.3 11.3z"/></svg>Reposo
+    </div>
+    <div class="tile qs glass" data-name="Ajustes del proyector">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg>Ajustes
+    </div>
+  </div>
+
+  <div id="toast" class="glass"></div>
+</div>
+<div id="hint">Prueba con las flechas ← → ↑ ↓ y Enter, como con el mando</div>
+
+<script>
+  // Escalar el lienzo 1920x1080 a la ventana
+  const stage = document.getElementById('stage');
+  function fit() {
+    const s = Math.min(innerWidth / 1920, innerHeight / 1080);
+    stage.style.transform = `translate(-50%, -50%) scale(${s})`;
+  }
+  addEventListener('resize', fit); fit();
+
+  // Fecha y hora
+  function tick() {
+    const now = new Date();
+    const d = now.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' });
+    document.getElementById('date').textContent = d.charAt(0).toUpperCase() + d.slice(1);
+    document.getElementById('clock').textContent =
+      now.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+  }
+  tick(); setInterval(tick, 1000);
+
+  // Navegación tipo mando a distancia
+  const rows = [...document.querySelectorAll('.row')].map(r => [...r.querySelectorAll('.tile')]);
+  let r = 0, c = 1;
+  function focus() {
+    document.querySelectorAll('.tile.focus').forEach(t => t.classList.remove('focus'));
+    rows[r][c].classList.add('focus');
+  }
+  let toastTimer;
+  function open(tile) {
+    const t = document.getElementById('toast');
+    t.textContent = 'Abriendo ' + tile.dataset.name + '…';
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), 1400);
+  }
+  addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight') c = Math.min(c + 1, rows[r].length - 1);
+    else if (e.key === 'ArrowLeft') c = Math.max(c - 1, 0);
+    else if (e.key === 'ArrowDown' && r < rows.length - 1) { r++; c = Math.min(c, rows[r].length - 1); }
+    else if (e.key === 'ArrowUp' && r > 0) { r--; c = Math.min(c, rows[r].length - 1); }
+    else if (e.key === 'Enter') { open(rows[r][c]); return; }
+    else return;
+    e.preventDefault(); focus();
+  });
+  rows.forEach((row, ri) => row.forEach((tile, ci) => {
+    tile.addEventListener('mouseenter', () => { r = ri; c = ci; focus(); });
+    tile.addEventListener('click', () => open(tile));
+  }));
+  focus();
+</script>
+</body>
+</html>

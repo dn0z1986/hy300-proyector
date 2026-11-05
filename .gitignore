@@ -1,0 +1,14 @@
+# Capturas de las pruebas (tienen datos personales: perfiles, cuentas, móvil)
+captura-*.png
+
+# Clave de firma: cada uno genera la suya
+*.keystore
+
+# La versión para teles va en su propio repositorio, y la guía local también
+tv/
+GUIA-TV.md
+
+# Compilación (el APK va en Releases)
+build/
+*.apk
+hy300-launcher/tools/debug-cresta.jpg
