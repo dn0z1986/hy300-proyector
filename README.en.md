@@ -6,6 +6,8 @@ An Apple‑style home screen for the **Magcubic HY300** projector (Android 11). 
 
 ![Home screen](docs/inicio.png)
 
+> ⭐ **If you like it, give it a star** (top right): it helps other HY300 owners find it.
+
 - A lake and mountains wallpaper with **the clock hidden behind the mountains** (depth effect).
 - **Bold, dark‑blue** time and date, easy to read when projected on a white wall.
 - Big tiles for **Jellyfin, Netflix, IPTV and YouTube**, plus "All apps" and Settings.
@@ -18,6 +20,21 @@ An Apple‑style home screen for the **Magcubic HY300** projector (Android 11). 
 ![All apps](docs/todas-las-apps.png)
 
 ## Install
+
+### Without a computer
+
+1. Get the APK onto the projector in one of these two ways:
+   - With the **Downloader** app (by AFTVnews), if your projector's store has it. Enter this address:
+     ```
+     https://github.com/dn0z1986/hy300-proyector/releases/latest/download/Inicio-HY300.apk
+     ```
+   - Or download `Inicio-HY300.apk` from [Releases](../../releases) on another device, copy it to a **USB stick** and open it with the projector's file manager.
+2. If it asks for permission to **install unknown apps**, allow it and press **Install**.
+3. Press the **Home** button on the remote. If it asks which home screen to use, choose **Inicio** and **Always**.
+
+If it doesn't ask and the factory home screen keeps showing, the app is installed (you'll find it in the app list), but to make it the home screen you need to do step 4 below once from a computer.
+
+### With a computer (ADB)
 
 You need a computer with **ADB** ([Android platform-tools](https://developer.android.com/tools/releases/platform-tools)) and a USB cable.
 

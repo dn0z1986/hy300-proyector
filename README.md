@@ -6,6 +6,8 @@ Una pantalla de inicio "tipo Apple" para el proyector **Magcubic HY300** (Androi
 
 ![Pantalla de inicio](docs/inicio.png)
 
+> ⭐ **Si te gusta, dale una estrella** (arriba a la derecha): así más gente con un HY300 lo encuentra.
+
 - Fondo de un lago con montañas, y **la hora escondida detrás de las montañas** (efecto profundidad).
 - Hora y fecha en **azul oscuro y gruesas**, para que se lean bien proyectadas sobre una pared blanca.
 - Botones grandes para **Jellyfin, Netflix, IPTV y YouTube**, más "Todas las apps" y Ajustes.
@@ -16,6 +18,21 @@ Una pantalla de inicio "tipo Apple" para el proyector **Magcubic HY300** (Androi
 ![Todas las apps](docs/todas-las-apps.png)
 
 ## Instalarlo
+
+### Sin ordenador
+
+1. Pasa el APK al proyector de una de estas dos formas:
+   - Con la app **Downloader** (de AFTVnews), si la tienes en la tienda del proyector. Escribe esta dirección:
+     ```
+     https://github.com/dn0z1986/hy300-proyector/releases/latest/download/Inicio-HY300.apk
+     ```
+   - O descarga `Inicio-HY300.apk` de [Releases](../../releases) en otro aparato, cópialo a un **pendrive** y ábrelo con el explorador de archivos del proyector.
+2. Si te pide permiso para **instalar apps desconocidas**, dáselo y pulsa **Instalar**.
+3. Pulsa el botón **Inicio** del mando. Si te pregunta qué pantalla de inicio usar, elige **Inicio** y **Siempre**.
+
+Si no te pregunta y sigue saliendo la pantalla de fábrica, la app ya está instalada (la verás en la lista de apps), pero para ponerla como pantalla de inicio hay que hacer una vez el paso 4 de abajo con un ordenador.
+
+### Con ordenador (ADB)
 
 Necesitas un ordenador con **ADB** (las [platform-tools de Android](https://developer.android.com/tools/releases/platform-tools)) y un cable USB.
 
